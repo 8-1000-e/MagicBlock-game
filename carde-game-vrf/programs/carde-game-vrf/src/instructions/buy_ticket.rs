@@ -23,7 +23,6 @@ pub fn handler(ctx: Context<BuyTicket>) -> Result<()>
     
     ctx.accounts.pool.ticket_left -= 1;
     
-    ctx.accounts.pool.ticket_price *= 2;
     ctx.accounts.pool.last_buyer = ctx.accounts.buyer.key();
     
     //VRF

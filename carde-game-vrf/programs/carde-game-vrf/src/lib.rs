@@ -42,7 +42,4 @@ pub mod carde_game_vrf {
         instructions::resolve_ticket::handler(ctx, randomness)
     }
 
-    pub fn close_pool(ctx: Context<ClosePool>) -> Result<()> {
-        instructions::close_pool::handler(ctx)
-    }
 }
