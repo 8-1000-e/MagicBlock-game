@@ -8,11 +8,14 @@ skip-lint = false
 [programs.localnet]
 carde_game_vrf = "9As38cKdZYeMStQjfDdWgTUKTBLpxb4XUhPd6FtJhtbQ"
 
+[programs.devnet]
+carde_game_vrf = "9As38cKdZYeMStQjfDdWgTUKTBLpxb4XUhPd6FtJhtbQ"
+
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

@@ -26,8 +26,6 @@ pub enum CustomError {
     InvalidBuyer,
     #[msg("Too many tickets (max 50)")]
     TooManyTickets,
-    #[msg("Ticket price overflow")]
-    TicketPriceOverflow,
     #[msg("Cannot cancel pool with tickets sold")]
     PoolHasTicketsSold,
 }

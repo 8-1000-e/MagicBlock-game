@@ -71,6 +71,7 @@ This is a small devnet program, not production-ready. Things that would need to 
 - **VRF timeout recovery** — If the MagicBlock oracle never callbacks, the pool stays in `PendingVrf` forever and funds are locked. A `force_reopen` instruction with a timeout check would fix this.
 - **Ticket price escalation** — Price doubles every purchase (`saturating_mul`). With 50 tickets max, the price becomes astronomically high well before all tickets are sold. A `max_ticket_price` cap or pool expiry would help.
 - **Super admin transfer** — No way to transfer the `super_admin` role. If the key is lost, the admin system is bricked.
+- **No fee mechanism** — The protocol takes no cut on ticket sales or prize payouts. A production version would need a fee split (e.g. % of each ticket going to a fee vault) to be sustainable.
 - **Pool rent accumulation** — Settled/Cancelled pools stay on-chain forever (~0.002 SOL each). A `close_pool` instruction would reclaim rent, but we keep them for history.
 - **No re-buy protection** — Same wallet can buy all tickets in a pool.
 - **Hardcoded devnet constants** — Oracle queue, VRF program addresses are devnet-only.
