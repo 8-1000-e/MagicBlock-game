@@ -27,11 +27,11 @@ pub mod carde_game_vrf {
 
     pub fn create_pool(
         ctx: Context<CreatePool>,
-        pool_id: u64,
+        prize_pool: u64,
+        ticket_price: u64,
         total_tickets: u16,
-        base_price: u64,
     ) -> Result<()> {
-        instructions::create_pool::handler(ctx, pool_id, total_tickets, base_price)
+        instructions::create_pool::handler(ctx, prize_pool, ticket_price, total_tickets)
     }
 
     pub fn buy_ticket(ctx: Context<BuyTicket>) -> Result<()> {

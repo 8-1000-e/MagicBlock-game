@@ -15,6 +15,7 @@ pub struct Pool
     pub winner: Option<Pubkey>,
     pub bump: u8,
     pub created_at: i64,
+    pub closed_at: Option<i64>,
 }
 
 #[derive(InitSpace, AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]

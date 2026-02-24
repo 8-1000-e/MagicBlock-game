@@ -2,10 +2,11 @@ use anchor_lang::prelude::*;
 use crate::constants::*;
 use crate::state::*;
 
-pub fn _initalize(ctx: Context<Initialize>) -> Result<()> 
+pub fn handler(ctx: Context<Initialize>) -> Result<()> 
 {
     ctx.accounts.config.super_admin = ctx.accounts.super_admin.key();
-    ctx.accounts.config.bump = *ctx.bumps;
+    ctx.accounts.config.bump = ctx.bumps.config;
+    ctx.accounts.config.pool_count = 0;
 
     Ok(())
 }

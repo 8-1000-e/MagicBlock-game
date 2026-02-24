@@ -22,6 +22,7 @@ custom-panic = []
 
 [dependencies]
 anchor-lang = "0.32.1"
+ephemeral-vrf-sdk = { version = "0.2.3", features = ["anchor"] }
 
 
 [lints.rust]
