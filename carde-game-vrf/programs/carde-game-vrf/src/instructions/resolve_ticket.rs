@@ -3,6 +3,7 @@ use anchor_lang::prelude::*;
 use crate::constants::*;
 use crate::state::*;
 use crate::errors::CustomError;
+use crate::events::TicketResolved;
 
 pub fn handler(ctx: Context<ResolveTicket>, random_value: [u8; 32]) -> Result<()> 
 {
@@ -18,23 +19,33 @@ pub fn handler(ctx: Context<ResolveTicket>, random_value: [u8; 32]) -> Result<()
     // Si le dernier ticket (ticket_left == 0), win auto
     // Sinon, 1 chance sur odds
     let win = ctx.accounts.pool.ticket_left == 0 || random_number % odds == 0;
+    let mut prize_amount: u64 = 0;
     if win
     {
         ctx.accounts.pool.winner = Some(ctx.accounts.buyer.key());
         ctx.accounts.pool.status = PoolStatus::Settled;
         ctx.accounts.pool.closed_at = Some(Clock::get()?.unix_timestamp);
 
-        //send SOL to winner
-        let amount = ctx.accounts.pool.lamports();
-        ctx.accounts.buyer.add_lamports(amount)?;
-        ctx.accounts.pool.sub_lamports(amount)?;
+        // Send only the prize_pool amount to winner (keep rent in PDA)
+        prize_amount = ctx.accounts.pool.prize_pool;
+        ctx.accounts.pool.sub_lamports(prize_amount)?;
+        ctx.accounts.buyer.add_lamports(prize_amount)?;
+        ctx.accounts.pool.prize_pool = 0;
     }
     else
     {
         ctx.accounts.pool.status = PoolStatus::Open;
         ctx.accounts.pool.prize_pool += ctx.accounts.pool.ticket_price;
-        ctx.accounts.pool.ticket_price *= 2;
+        ctx.accounts.pool.ticket_price = ctx.accounts.pool.ticket_price.saturating_mul(2);
     }
+
+    emit!(TicketResolved 
+    {
+        pool_id: ctx.accounts.pool.pool_id,
+        buyer: ctx.accounts.buyer.key(),
+        won: win,
+        prize: prize_amount,
+    });
 
     Ok(())
 }

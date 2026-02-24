@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 use crate::constants::*;
 use crate::state::*;
 use crate::errors::CustomError;
+use crate::events::TicketBought;
 use ephemeral_vrf_sdk::anchor::vrf;
 use ephemeral_vrf_sdk::instructions::{create_request_randomness_ix, RequestRandomnessParams};
 use ephemeral_vrf_sdk::types::SerializableAccountMeta;
@@ -25,6 +26,14 @@ pub fn handler(ctx: Context<BuyTicket>) -> Result<()>
     
     ctx.accounts.pool.last_buyer = ctx.accounts.buyer.key();
     
+    emit!(TicketBought 
+    {
+        pool_id: ctx.accounts.pool.pool_id,
+        buyer: ctx.accounts.buyer.key(),
+        price_paid: ctx.accounts.pool.ticket_price,
+        tickets_left: ctx.accounts.pool.ticket_left,
+    });
+
     //VRF
     ctx.accounts.pool.status = PoolStatus::PendingVrf;
     let callback_accounts = vec![
@@ -44,7 +53,7 @@ pub fn handler(ctx: Context<BuyTicket>) -> Result<()>
             {
                 let mut seed = [0u8; 32];
                 seed[..8].copy_from_slice(&ctx.accounts.pool.pool_id.to_le_bytes());
-                seed[8..10].copy_from_slice(&ctx.accounts.pool.ticket_left.to_le_bytes());
+                seed[8] = ctx.accounts.pool.ticket_left;
                 seed
             },
             ..Default::default()

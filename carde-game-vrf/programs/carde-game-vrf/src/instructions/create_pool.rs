@@ -2,14 +2,21 @@ use anchor_lang::prelude::*;
 use crate::constants::*;
 use crate::state::*;
 use crate::errors::CustomError;
+use crate::events::PoolCreated;
 
-pub fn handler(ctx: Context<CreatePool>, prize_pool: u64, ticket_price: u64, total_tickets: u16) -> Result<()> 
+pub fn handler(ctx: Context<CreatePool>, prize_pool: u64, ticket_price: u64, total_tickets: u8) -> Result<()> 
 {
-    require!(ctx.accounts.config.admins.iter().any(|a| *a == ctx.accounts.creator.key()), CustomError::AdminNotAuthorized);
+    let creator_key = ctx.accounts.creator.key();
+    require!(
+        ctx.accounts.config.super_admin == creator_key
+        || ctx.accounts.config.admins.iter().any(|a| *a == creator_key),
+        CustomError::AdminNotAuthorized
+    );
     require!(prize_pool > 0, CustomError::InvalidPrizePool);
     require!(ticket_price > 0, CustomError::InvalidTicketPrice);
     require!(total_tickets > 0, CustomError::InvalidTotalTickets);
-
+    require!(total_tickets <= MAX_TICKETS, CustomError::TooManyTickets);
+    
     ctx.accounts.pool.creator = ctx.accounts.creator.key();
     ctx.accounts.pool.pool_id = ctx.accounts.config.pool_count;
     ctx.accounts.pool.prize_pool = prize_pool;
@@ -26,12 +33,22 @@ pub fn handler(ctx: Context<CreatePool>, prize_pool: u64, ticket_price: u64, tot
     ctx.accounts.config.pool_count += 1;
 
     //transfer SOL from creator to pool account
-    let cpi_accounts = anchor_lang::system_program::Transfer {
+    let cpi_accounts = anchor_lang::system_program::Transfer 
+    {
         from: ctx.accounts.creator.to_account_info(),
         to: ctx.accounts.pool.to_account_info(),
     };
     let cpi_context = CpiContext::new(ctx.accounts.system_program.to_account_info(), cpi_accounts);
     anchor_lang::system_program::transfer(cpi_context, prize_pool)?;
+
+    emit!(PoolCreated 
+    {
+        pool_id: ctx.accounts.pool.pool_id,
+        creator: ctx.accounts.pool.creator,
+        prize_pool,
+        ticket_price,
+        total_tickets,
+    });
 
     Ok(())
 }

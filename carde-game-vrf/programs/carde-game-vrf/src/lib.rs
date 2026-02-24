@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 
 pub mod constants;
 pub mod errors;
+pub mod events;
 pub mod instructions;
 pub mod state;
 
@@ -29,7 +30,7 @@ pub mod carde_game_vrf {
         ctx: Context<CreatePool>,
         prize_pool: u64,
         ticket_price: u64,
-        total_tickets: u16,
+        total_tickets: u8,
     ) -> Result<()> {
         instructions::create_pool::handler(ctx, prize_pool, ticket_price, total_tickets)
     }
@@ -38,8 +39,11 @@ pub mod carde_game_vrf {
         instructions::buy_ticket::handler(ctx)
     }
 
-    pub fn resolve_ticket(ctx: Context<ResolveTicket>, randomness: Vec<u8>) -> Result<()> {
+    pub fn resolve_ticket(ctx: Context<ResolveTicket>, randomness: [u8; 32]) -> Result<()> {
         instructions::resolve_ticket::handler(ctx, randomness)
     }
 
+    pub fn cancel_pool(ctx: Context<CancelPool>) -> Result<()> {
+        instructions::cancel_pool::handler(ctx)
+    }
 }

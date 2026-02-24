@@ -16,4 +16,18 @@ pub enum CustomError {
     InvalidTicketPrice,
     #[msg("Invalid total tickets")]
     InvalidTotalTickets,
+    #[msg("Pool is not open")]
+    PoolNotOpen,
+    #[msg("No tickets left")]
+    NoTicketsLeft,
+    #[msg("Pool is pending VRF")]
+    PoolNotPendingVrf,
+    #[msg("Invalid buyer")]
+    InvalidBuyer,
+    #[msg("Too many tickets (max 50)")]
+    TooManyTickets,
+    #[msg("Ticket price overflow")]
+    TicketPriceOverflow,
+    #[msg("Cannot cancel pool with tickets sold")]
+    PoolHasTicketsSold,
 }
