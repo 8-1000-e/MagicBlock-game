@@ -1,0 +1,25 @@
+[package]
+name = "create-pool"
+version = "0.1.0"
+description = "Carde game — create-pool system"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "create_pool"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+idl-build = ["bolt-lang/idl-build"]
+anchor-debug = ["bolt-lang/anchor-debug"]
+custom-heap = []
+custom-panic = []
+
+[dependencies]
+bolt-lang.workspace = true
+pool = { path = "../../components/pool", features = ["cpi"] }
+shared = { path = "../../libs/shared" }

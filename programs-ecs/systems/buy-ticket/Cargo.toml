@@ -1,0 +1,26 @@
+[package]
+name = "buy-ticket"
+version = "0.1.0"
+description = "Carde game — buy-ticket system (issues VRF request)"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "buy_ticket"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+idl-build = ["bolt-lang/idl-build"]
+anchor-debug = ["bolt-lang/anchor-debug"]
+custom-heap = []
+custom-panic = []
+
+[dependencies]
+bolt-lang.workspace = true
+ephemeral-vrf-sdk = { version = "0.2.3", features = ["anchor"] }
+pool = { path = "../../components/pool", features = ["cpi"] }
+shared = { path = "../../libs/shared" }
